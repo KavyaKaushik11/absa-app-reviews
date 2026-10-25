@@ -67,51 +67,46 @@ annotation PBI_QueryOrder = ["{T}"]
 
 ref table {T}""")
 
+# All per-review columns are calculated in collect_reviews.py. Power BI only picks the
+# columns it shows, gives them readable names and sets their types.
+# (CSV column, Power BI name, M type, TMDL dataType, formatString, summarizeBy, sortByColumn)
+FIELDS = [
+    ("platform", "Store", "type text", "string", None, "none", None),
+    ("review_id", "Review ID", "type text", "string", None, "none", None),
+    ("rating", "Rating", "Int64.Type", "int64", "0", "none", None),
+    ("title", "Title", "type text", "string", None, "none", None),
+    ("text", "Review", "type text", "string", None, "none", None),
+    ("app_version", "App Version", "type text", "string", None, "none", None),
+    ("review_date_local", "Review Date", "type datetime", "dateTime", "dd mmm yyyy hh:nn", "none", None),
+    ("review_day", "Review Day", "type date", "dateTime", "dd mmm yyyy", "none", None),
+    ("month", "Month", "type date", "dateTime", "mmm yyyy", "none", None),
+    ("version", "Version", "type text", "string", None, "none", "Version Sort"),
+    ("version_sort", "Version Sort", "Int64.Type", "int64", "0", "none", None),
+    ("stars", "Stars", "type text", "string", None, "none", "Rating"),
+    ("sentiment", "Sentiment", "type text", "string", None, "none", None),
+    ("replied", "Replied", "type text", "string", None, "none", None),
+    ("hours_to_reply", "Hours to Reply", "type number", "double", "#,0.0", "none", None),
+    ("thumbs_up", "Thumbs Up", "Int64.Type", "int64", "#,0", "sum", None),
+    ("reply_text", "ABSA Reply", "type text", "string", None, "none", None),
+]
+
+
+def m_list(items):
+    return "{" + ", ".join(items) + "}"
+
+
 M_QUERY = f'''let
-    Source = Csv.Document(Web.Contents("{CSV_URL}"), [Delimiter = ",", Columns = 11, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+    Source = Csv.Document(Web.Contents("{CSV_URL}"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
     Headers = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
     Blanks = Table.ReplaceValue(Headers, "", null, Replacer.ReplaceValue, Table.ColumnNames(Headers)),
-    Typed = Table.TransformColumnTypes(Blanks, {{{{"rating", Int64.Type}}, {{"thumbs_up", Int64.Type}}, {{"review_date", type datetimezone}}, {{"reply_date", type datetimezone}}, {{"fetched_at", type datetimezone}}}}, "en-US"),
-    // Times are stored in UTC; show them in Uganda time (EAT, UTC+3).
-    ToLocal = (x) => if x = null then null else DateTimeZone.RemoveZone(DateTimeZone.SwitchZone(x, 3)),
-    Local = Table.TransformColumns(Typed, {{{{"review_date", ToLocal, type datetime}}, {{"reply_date", ToLocal, type nullable datetime}}, {{"fetched_at", ToLocal, type datetime}}}}),
-    Stores = Table.TransformColumns(Local, {{{{"store", each if _ = "apple" then "iOS" else "Android", type text}}}}),
-    AddDay = Table.AddColumn(Stores, "Review Day", each DateTime.Date([review_date]), type date),
-    AddMonth = Table.AddColumn(AddDay, "Month", each Date.StartOfMonth([Review Day]), type date),
-    // "8.7.2" becomes "8.7"; Android names like "26.8.1 - August-Release" become "26.8".
-    AddVersion = Table.AddColumn(AddMonth, "Version", each if [app_version] = null then "Unknown" else Text.Combine(List.FirstN(Text.Split(Text.Trim(Text.Split([app_version], " - "){{0}}), "."), 2), "."), type text),
-    AddVersionSort = Table.AddColumn(AddVersion, "Version Sort", each try Number.From(Text.Split([Version], "."){{0}}) * 1000 + Number.From(Text.Split([Version], "."){{1}}) otherwise 0, Int64.Type),
-    AddStars = Table.AddColumn(AddVersionSort, "Stars", each Text.From([rating]) & " star", type text),
-    AddSentiment = Table.AddColumn(AddStars, "Sentiment", each if [rating] >= 4 then "Positive" else if [rating] = 3 then "Neutral" else "Negative", type text),
-    // Apple's public feed has no developer replies, so iOS shows "No data".
-    AddReplied = Table.AddColumn(AddSentiment, "Replied", each if [store] = "iOS" then "No data" else if [reply_text] = null then "No" else "Yes", type text),
-    AddHours = Table.AddColumn(AddReplied, "Hours to Reply", each if [reply_date] = null then null else Duration.TotalHours([reply_date] - [review_date]), type nullable number),
-    Renamed = Table.RenameColumns(AddHours, {{{{"store", "Store"}}, {{"review_id", "Review ID"}}, {{"rating", "Rating"}}, {{"title", "Title"}}, {{"text", "Review"}}, {{"app_version", "App Version"}}, {{"review_date", "Review Date"}}, {{"thumbs_up", "Thumbs Up"}}, {{"reply_text", "ABSA Reply"}}, {{"reply_date", "Reply Date"}}, {{"fetched_at", "First Seen"}}}})
+    Kept = Table.SelectColumns(Blanks, {m_list(f'"{f[0]}"' for f in FIELDS)}),
+    Renamed = Table.RenameColumns(Kept, {m_list(f'{{"{f[0]}", "{f[1]}"}}' for f in FIELDS)}),
+    Typed = Table.TransformColumnTypes(Renamed, {m_list(f'{{"{f[1]}", {f[2]}}}' for f in FIELDS)}, "en-US")
 in
-    Renamed'''
+    Typed'''
 
 # (name, dataType, formatString, summarizeBy, sortByColumn)
-COLUMNS = [
-    ("Store", "string", None, "none", None),
-    ("Review ID", "string", None, "none", None),
-    ("Rating", "int64", "0", "none", None),
-    ("Title", "string", None, "none", None),
-    ("Review", "string", None, "none", None),
-    ("App Version", "string", None, "none", None),
-    ("Review Date", "dateTime", "dd mmm yyyy hh:nn", "none", None),
-    ("Thumbs Up", "int64", "#,0", "sum", None),
-    ("ABSA Reply", "string", None, "none", None),
-    ("Reply Date", "dateTime", "dd mmm yyyy hh:nn", "none", None),
-    ("First Seen", "dateTime", "dd mmm yyyy hh:nn", "none", None),
-    ("Review Day", "dateTime", "dd mmm yyyy", "none", None),
-    ("Month", "dateTime", "mmm yyyy", "none", None),
-    ("Version", "string", None, "none", "Version Sort"),
-    ("Version Sort", "int64", "0", "none", None),
-    ("Stars", "string", None, "none", "Rating"),
-    ("Sentiment", "string", None, "none", None),
-    ("Replied", "string", None, "none", None),
-    ("Hours to Reply", "double", "#,0.0", "none", None),
-]
+COLUMNS = [(f[1], f[3], f[4], f[5], f[6]) for f in FIELDS]
 
 # (name, DAX, formatString)
 MEASURES = [

@@ -1,8 +1,0 @@
-{
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/1.1.0/schema.json",
-  "name": "46f53aff4dde4df1911b",
-  "displayName": "Latest reviews",
-  "displayOption": "FitToPage",
-  "height": 720,
-  "width": 1280
-}

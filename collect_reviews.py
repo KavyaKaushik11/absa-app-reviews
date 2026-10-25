@@ -17,8 +17,16 @@ GOOGLE_MAX_REVIEWS = 1000                     # newest N reviews per run
 
 DATA_FILE = Path(__file__).parent / "data" / "reviews.csv"
 
+LOCAL_TZ = "Africa/Kampala"                   # Uganda time (EAT, UTC+3)
+
+# Raw store data. New columns go at the end, so older dashboards that read
+# only the first 11 columns keep working.
 COLUMNS = ["store", "review_id", "rating", "title", "text", "app_version",
            "review_date", "thumbs_up", "reply_text", "reply_date", "fetched_at"]
+
+# Added by add_derived_columns() for the dashboard.
+DERIVED_COLUMNS = ["platform", "review_date_local", "review_day", "month", "version",
+                   "version_sort", "stars", "sentiment", "replied", "hours_to_reply"]
 
 
 def fetch_apple_reviews(app_id=APPLE_APP_ID, country=COUNTRY, max_pages=10):
@@ -77,6 +85,60 @@ def fetch_google_reviews(app_id=GOOGLE_APP_ID, country=COUNTRY, max_reviews=GOOG
     return pd.DataFrame(rows)
 
 
+def short_version(app_version):
+    """'8.7.2' -> '8.7'; Android names like '26.8.1 - August-Release' -> '26.8'."""
+    if pd.isna(app_version) or not str(app_version).strip():
+        return "Unknown"
+    parts = str(app_version).split(" - ")[0].strip().split(".")
+    return ".".join(parts[:2])
+
+
+def version_sort_key(version):
+    """'8.7' -> 8007 and '8.10' -> 8010, so versions sort as numbers, not text."""
+    try:
+        major, minor = version.split(".")[:2]
+        return int(major) * 1000 + int(minor)
+    except ValueError:
+        return 0
+
+
+def sentiment(rating):
+    if rating >= 4:
+        return "Positive"
+    if rating == 3:
+        return "Neutral"
+    return "Negative"
+
+
+def add_derived_columns(df):
+    """Add one-value-per-review columns for the dashboard.
+
+    Recalculated for every row on each run, so a rule change here reaches the
+    dashboard on the next Refresh. Measures (averages, percentages) stay in Power BI,
+    because they must recalculate when the user filters.
+    """
+    df = df.copy()
+    review_utc = pd.to_datetime(df["review_date"], utc=True, format="mixed")
+    reply_utc = pd.to_datetime(df["reply_date"], utc=True, format="mixed")
+    review_local = review_utc.dt.tz_convert(LOCAL_TZ)
+
+    df["platform"] = df["store"].map({"apple": "iOS", "google": "Android"})
+    df["review_date_local"] = review_local.dt.strftime("%Y-%m-%d %H:%M:%S")
+    df["review_day"] = review_local.dt.strftime("%Y-%m-%d")
+    df["month"] = review_local.dt.strftime("%Y-%m-01")
+    df["version"] = df["app_version"].map(short_version)
+    df["version_sort"] = df["version"].map(version_sort_key)
+    df["stars"] = df["rating"].astype(int).astype(str) + " star"
+    df["sentiment"] = df["rating"].map(sentiment)
+    # Apple's public feed has no developer replies, so iOS gets "No data".
+    has_reply = df["reply_text"].notna() & (df["reply_text"].astype(str).str.strip() != "")
+    df["replied"] = "No"
+    df.loc[has_reply, "replied"] = "Yes"
+    df.loc[df["store"] == "apple", "replied"] = "No data"
+    df["hours_to_reply"] = ((reply_utc - review_utc).dt.total_seconds() / 3600).round(1)
+    return df[COLUMNS + DERIVED_COLUMNS]
+
+
 def main():
     apple_df = fetch_apple_reviews()
     google_df = fetch_google_reviews()
@@ -99,6 +161,7 @@ def main():
     # and the hourly commit only contains real changes.
     all_df["fetched_at"] = all_df.groupby(["store", "review_id"])["fetched_at"].transform("first")
     all_df = all_df.drop_duplicates(subset=["store", "review_id"], keep="last")[COLUMNS]
+    all_df = add_derived_columns(all_df)
     all_df.to_csv(DATA_FILE, index=False)
     print(f"Saved {len(all_df)} reviews to {DATA_FILE} ({len(all_df) - len(old_df)} new)")
 
