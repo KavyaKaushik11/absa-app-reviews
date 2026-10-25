@@ -221,18 +221,40 @@ def page(display_name):
     return name
 
 
+SENTIMENT_COLOURS = {"Negative": "#D64550", "Neutral": "#9AA0A6", "Positive": "#2E9E5B"}
+
+
+def sentiment_colours():
+    """dataPoint colours per Sentiment value, for charts that split by sentiment."""
+    return [{
+        "properties": {"fill": {"solid": {"color": lit(f"'{colour}'")}}},
+        "selector": {"data": [{"scopeId": {"Comparison": {
+            "ComparisonKind": 0, "Left": col("Sentiment"), "Right": {"Literal": {"Value": f"'{value}'"}}}}}]},
+    } for value, colour in SENTIMENT_COLOURS.items()]
+
+
 # Page 1: Overview
+# Clicking a bar or column (for example "Negative") filters the reviews table at the bottom.
 p1 = page("Overview")
 slicer(p1, "Store", 20, 10, 300, "Dropdown")
 slicer(p1, "Review Day", 340, 10, 440, "Between")
 for i, m in enumerate(["Review Count", "Average Rating", "% Positive", "% Negative"]):
-    visual(p1, "card", 20 + i * 315, 95, 295, 110, {"Values": [meas(m)]})
-visual(p1, "lineChart", 20, 225, 610, 475,
+    visual(p1, "card", 20 + i * 315, 90, 295, 95, {"Values": [meas(m)]})
+# Ratings are 1-5; the axis goes to 5.5 so lines at 5 do not touch the top edge.
+visual(p1, "lineChart", 20, 200, 400, 240,
        {"Category": [col("Month")], "Series": [col("Store")], "Y": [meas("Average Rating")]},
-       title="Average rating per month", sort=(col("Month"), "Ascending"))
-visual(p1, "clusteredColumnChart", 650, 225, 610, 475,
+       title="Average rating per month", sort=(col("Month"), "Ascending"),
+       objects={"valueAxis": [{"properties": {"start": lit("1D"), "end": lit("5.5D")}}]})
+visual(p1, "clusteredColumnChart", 440, 200, 400, 240,
        {"Category": [col("Stars")], "Series": [col("Store")], "Y": [meas("Review Count")]},
        title="Reviews by star rating", sort=(col("Stars"), "Ascending"))
+visual(p1, "clusteredBarChart", 860, 200, 400, 240,
+       {"Category": [col("Sentiment")], "Y": [meas("Review Count")]},
+       title="Reviews by sentiment (click to filter the list)", sort=(col("Sentiment"), "Ascending"),
+       objects={"dataPoint": sentiment_colours()})
+visual(p1, "tableEx", 20, 455, 1240, 255,
+       {"Values": [col(c) for c in ["Review Date", "Store", "Rating", "Sentiment", "Review"]]},
+       title="Reviews", sort=(col("Review Date"), "Descending"))
 
 # Page 2: Versions
 p2 = page("App versions")
@@ -242,7 +264,8 @@ visual(p2, "clusteredBarChart", 20, 95, 610, 605,
        title="Average rating by app version", sort=(col("Version"), "Descending"))
 visual(p2, "barChart", 650, 95, 610, 605,
        {"Category": [col("Version")], "Series": [col("Sentiment")], "Y": [meas("Review Count")]},
-       title="Reviews by app version and sentiment", sort=(col("Version"), "Descending"))
+       title="Reviews by app version and sentiment", sort=(col("Version"), "Descending"),
+       objects={"dataPoint": sentiment_colours()})
 
 # Page 3: Latest reviews
 p3 = page("Latest reviews")

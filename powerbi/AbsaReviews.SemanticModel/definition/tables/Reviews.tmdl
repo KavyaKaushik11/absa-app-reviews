@@ -1,37 +1,37 @@
 table Reviews
-	lineageTag: 33da75b7-f296-4152-b34f-6aa06929bc27
+	lineageTag: 7b329e80-5182-4024-8609-ccf6c5bcadb6
 
 	measure 'Review Count' = COUNTROWS(Reviews)
 		formatString: #,0
-		lineageTag: ecc3fdd4-d7c0-4b87-ba3c-5e550eefa746
+		lineageTag: f0417342-6d8b-47ac-8b58-d03a542d1a3e
 
 	measure 'Average Rating' = AVERAGE(Reviews[Rating])
 		formatString: 0.00
-		lineageTag: f64cb769-fb71-41d6-b08e-22f7372c7d68
+		lineageTag: 952c88a4-0912-4f58-9d88-724a8bdd61cd
 
 	measure '% Positive' = DIVIDE(CALCULATE(COUNTROWS(Reviews), Reviews[Sentiment] = "Positive"), COUNTROWS(Reviews))
 		formatString: 0.0%;-0.0%;0.0%
-		lineageTag: 92b1e432-88d8-4f33-8ffb-31926520c011
+		lineageTag: 131842c3-9ad1-488a-938a-2b66f89e9809
 
 	measure '% Negative' = DIVIDE(CALCULATE(COUNTROWS(Reviews), Reviews[Sentiment] = "Negative"), COUNTROWS(Reviews))
 		formatString: 0.0%;-0.0%;0.0%
-		lineageTag: 789738f4-6619-4125-8cb5-cbf2e49b4240
+		lineageTag: 522232e3-b07d-400b-8e0a-c61007e03c1c
 
 	measure 'Android Reply Rate' = DIVIDE(CALCULATE(COUNTROWS(Reviews), Reviews[Replied] = "Yes"), CALCULATE(COUNTROWS(Reviews), Reviews[Store] = "Android"))
 		formatString: 0.0%;-0.0%;0.0%
-		lineageTag: 0f1165b1-5be6-4f7e-8273-9fa93b815a59
+		lineageTag: f3cd00ae-10d1-4d3e-ae39-75bfe8dd8c98
 
 	measure 'Avg Hours to Reply' = AVERAGE(Reviews[Hours to Reply])
 		formatString: #,0.0
-		lineageTag: 6dba56dd-016d-43a6-8030-6ff9dbe18444
+		lineageTag: d93605dd-42a3-481c-b462-628979dcf7ca
 
 	measure 'Latest Review' = MAX(Reviews[Review Date])
 		formatString: dd mmm yyyy hh:nn
-		lineageTag: 7e95aedf-f1f8-47c0-b033-b76351e2cb23
+		lineageTag: e1d98fb0-a55a-4ee4-b04c-29c1167a4c04
 
 	column 'Store'
 		dataType: string
-		lineageTag: bb136557-17e4-4914-84b1-93af28cd19d2
+		lineageTag: 93a26223-c7c9-448a-bebd-4bf8d76be293
 		summarizeBy: none
 		sourceColumn: Store
 
@@ -39,7 +39,7 @@ table Reviews
 
 	column 'Review ID'
 		dataType: string
-		lineageTag: 683c7935-8f9b-4377-b8a5-5bc972d0c2d0
+		lineageTag: 47f8c9d6-8b46-4d44-a40b-39d1bc0bfd64
 		summarizeBy: none
 		sourceColumn: Review ID
 
@@ -48,7 +48,7 @@ table Reviews
 	column 'Rating'
 		dataType: int64
 		formatString: 0
-		lineageTag: a6d3b505-7495-45fa-8ed8-40ef1ceb0494
+		lineageTag: f9dbda2c-5986-48df-a964-87f467274b9e
 		summarizeBy: none
 		sourceColumn: Rating
 
@@ -56,7 +56,7 @@ table Reviews
 
 	column 'Title'
 		dataType: string
-		lineageTag: acdfb4ea-968e-4371-be1c-ca15dbbf75b5
+		lineageTag: 6c28c642-d43d-4642-8394-e1c7e12822c7
 		summarizeBy: none
 		sourceColumn: Title
 
@@ -64,7 +64,7 @@ table Reviews
 
 	column 'Review'
 		dataType: string
-		lineageTag: adc713b7-3b17-4702-a93f-b53aebcc8a72
+		lineageTag: d0f4ed33-5596-438f-9e96-284dbb2d2e78
 		summarizeBy: none
 		sourceColumn: Review
 
@@ -72,7 +72,7 @@ table Reviews
 
 	column 'App Version'
 		dataType: string
-		lineageTag: f95caa52-1eb3-4e3f-868a-c44145ea48f0
+		lineageTag: d987952c-31e2-4bd2-8556-5734252418af
 		summarizeBy: none
 		sourceColumn: App Version
 
@@ -81,7 +81,7 @@ table Reviews
 	column 'Review Date'
 		dataType: dateTime
 		formatString: dd mmm yyyy hh:nn
-		lineageTag: ee082052-479f-4706-831a-0dd0e24569b5
+		lineageTag: 236d7271-8edb-42d9-b655-786a525d599f
 		summarizeBy: none
 		sourceColumn: Review Date
 
@@ -90,7 +90,7 @@ table Reviews
 	column 'Review Day'
 		dataType: dateTime
 		formatString: dd mmm yyyy
-		lineageTag: 79e45ac2-9370-4aef-b1d1-d62fd331311e
+		lineageTag: e0a78205-d749-496e-b7f0-4819ab47755a
 		summarizeBy: none
 		sourceColumn: Review Day
 
@@ -99,7 +99,7 @@ table Reviews
 	column 'Month'
 		dataType: dateTime
 		formatString: mmm yyyy
-		lineageTag: e41df2b5-a9a6-4b6d-93ab-bdd78756f7ab
+		lineageTag: d2b19e8e-6b02-4964-81e2-c6b863a4892d
 		summarizeBy: none
 		sourceColumn: Month
 
@@ -107,7 +107,7 @@ table Reviews
 
 	column 'Version'
 		dataType: string
-		lineageTag: 704d0673-31b9-44a7-9aed-8c6acabef339
+		lineageTag: 79a95007-5da4-4e73-8364-2e8466d504f7
 		summarizeBy: none
 		sourceColumn: Version
 		sortByColumn: 'Version Sort'
@@ -117,7 +117,7 @@ table Reviews
 	column 'Version Sort'
 		dataType: int64
 		formatString: 0
-		lineageTag: b91ab647-7a32-4061-af33-c23123817555
+		lineageTag: 4ae5ce61-e37e-4c8a-823e-a2dd12353f78
 		summarizeBy: none
 		sourceColumn: Version Sort
 
@@ -125,7 +125,7 @@ table Reviews
 
 	column 'Stars'
 		dataType: string
-		lineageTag: b0004940-5577-410f-bcec-89b0c4ab1c3e
+		lineageTag: 759854d5-971f-4349-87e1-866bc2f093d9
 		summarizeBy: none
 		sourceColumn: Stars
 		sortByColumn: 'Rating'
@@ -134,7 +134,7 @@ table Reviews
 
 	column 'Sentiment'
 		dataType: string
-		lineageTag: 61a44ca4-26f7-4690-8b95-1f79b2d6b84f
+		lineageTag: 7e2a5f68-32e4-44e6-810e-13579dc3c37e
 		summarizeBy: none
 		sourceColumn: Sentiment
 
@@ -142,7 +142,7 @@ table Reviews
 
 	column 'Replied'
 		dataType: string
-		lineageTag: 55084209-acd5-4e0b-9d73-65a39b85b2a0
+		lineageTag: a52c2309-ee6e-4d0c-99bf-8dfc3fb80ada
 		summarizeBy: none
 		sourceColumn: Replied
 
@@ -151,7 +151,7 @@ table Reviews
 	column 'Hours to Reply'
 		dataType: double
 		formatString: #,0.0
-		lineageTag: 93b98881-5b83-438a-b148-14a584a37e58
+		lineageTag: aeb65db1-fbea-45bf-8c23-378c7e4cfb2a
 		summarizeBy: none
 		sourceColumn: Hours to Reply
 
@@ -160,7 +160,7 @@ table Reviews
 	column 'Thumbs Up'
 		dataType: int64
 		formatString: #,0
-		lineageTag: 981d220a-8937-4e3b-be2e-7cc875f94163
+		lineageTag: 64a5a614-c87a-4411-844c-444a59117edd
 		summarizeBy: sum
 		sourceColumn: Thumbs Up
 
@@ -168,7 +168,7 @@ table Reviews
 
 	column 'ABSA Reply'
 		dataType: string
-		lineageTag: 55d70d8b-c3ea-495a-8d90-65a3bff8b1ff
+		lineageTag: 74ae0f2f-21fa-4fb3-a8b8-4e707430c502
 		summarizeBy: none
 		sourceColumn: ABSA Reply
 
