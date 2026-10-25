@@ -68,10 +68,11 @@ def fetch_google_reviews(app_id=GOOGLE_APP_ID, country=COUNTRY, max_reviews=GOOG
         "title": None,   # Google reviews have no title
         "text": r["content"],
         "app_version": r.get("reviewCreatedVersion") or r.get("appVersion"),
-        "review_date": pd.to_datetime(r["at"]).tz_localize("UTC"),
+        # The scraper returns naive datetimes in the machine's local time zone.
+        "review_date": pd.Timestamp(r["at"].astimezone(timezone.utc)),
         "thumbs_up": r["thumbsUpCount"],
         "reply_text": r.get("replyContent"),
-        "reply_date": pd.to_datetime(r["repliedAt"]).tz_localize("UTC") if r.get("repliedAt") else None,
+        "reply_date": pd.Timestamp(r["repliedAt"].astimezone(timezone.utc)) if r.get("repliedAt") else None,
     } for r in results]
     return pd.DataFrame(rows)
 
