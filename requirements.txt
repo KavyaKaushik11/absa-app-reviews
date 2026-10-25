@@ -1,3 +1,4 @@
 google-play-scraper
 requests
 pandas
+vaderSentiment

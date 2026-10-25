@@ -83,7 +83,7 @@ FIELDS = [
     ("version", "Version", "type text", "string", None, "none", "Version Sort"),
     ("version_sort", "Version Sort", "Int64.Type", "int64", "0", "none", None),
     ("stars", "Stars", "type text", "string", None, "none", "Rating"),
-    ("sentiment", "Sentiment", "type text", "string", None, "none", None),
+    ("sentiment", "Sentiment", "type text", "string", None, "none", None),   # from VADER
     ("replied", "Replied", "type text", "string", None, "none", None),
     ("hours_to_reply", "Hours to Reply", "type number", "double", "#,0.0", "none", None),
     ("thumbs_up", "Thumbs Up", "Int64.Type", "int64", "#,0", "sum", None),
@@ -112,8 +112,8 @@ COLUMNS = [(f[1], f[3], f[4], f[5], f[6]) for f in FIELDS]
 MEASURES = [
     ("Review Count", f"COUNTROWS({T})", "#,0"),
     ("Average Rating", f"AVERAGE({T}[Rating])", "0.00"),
-    ("% Positive", f"DIVIDE(CALCULATE(COUNTROWS({T}), {T}[Rating] >= 4), COUNTROWS({T}))", "0.0%;-0.0%;0.0%"),
-    ("% Negative", f"DIVIDE(CALCULATE(COUNTROWS({T}), {T}[Rating] <= 2), COUNTROWS({T}))", "0.0%;-0.0%;0.0%"),
+    ("% Positive", f"DIVIDE(CALCULATE(COUNTROWS({T}), {T}[Sentiment] = \"Positive\"), COUNTROWS({T}))", "0.0%;-0.0%;0.0%"),
+    ("% Negative", f"DIVIDE(CALCULATE(COUNTROWS({T}), {T}[Sentiment] = \"Negative\"), COUNTROWS({T}))", "0.0%;-0.0%;0.0%"),
     ("Android Reply Rate", f'DIVIDE(CALCULATE(COUNTROWS({T}), {T}[Replied] = "Yes"), CALCULATE(COUNTROWS({T}), {T}[Store] = "Android"))', "0.0%;-0.0%;0.0%"),
     ("Avg Hours to Reply", f"AVERAGE({T}[Hours to Reply])", "#,0.0"),
     ("Latest Review", f"MAX({T}[Review Date])", "dd mmm yyyy hh:nn"),
@@ -250,7 +250,7 @@ slicer(p3, "Store", 20, 10, 300, "Dropdown")
 slicer(p3, "Sentiment", 340, 10, 300, "Dropdown")
 slicer(p3, "Review Day", 660, 10, 440, "Between")
 visual(p3, "tableEx", 20, 95, 1240, 605,
-       {"Values": [col(c) for c in ["Review Date", "Store", "Rating", "Title", "Review", "Version", "Replied", "ABSA Reply"]]},
+       {"Values": [col(c) for c in ["Review Date", "Store", "Rating", "Sentiment", "Title", "Review", "Version", "Replied", "ABSA Reply"]]},
        title="Latest reviews", sort=(col("Review Date"), "Descending"))
 
 write(f"{RP}/definition/pages/pages.json", {

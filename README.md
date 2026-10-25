@@ -28,7 +28,7 @@ Times are shown in Uganda time (EAT, UTC+3).
 
 ## Where the logic lives
 
-- **Python (`collect_reviews.py`)** – everything that has one value per review: Uganda time, platform name, month, short version, stars, sentiment, replied. Change a rule here and the dashboard picks it up on the next **Refresh**.
+- **Python (`collect_reviews.py`)** – everything that has one value per review: Uganda time, platform name, month, short version, stars, VADER sentiment, replied. Change a rule here and the dashboard picks it up on the next **Refresh**.
 - **Power BI** – only the readable column names, data types, sort orders, the measures (averages and percentages, which must recalculate when you filter) and the charts.
 
 ## CSV columns
@@ -53,11 +53,19 @@ Times are shown in Uganda time (EAT, UTC+3).
 | `version` | Short version, e.g. `8.7`; `Unknown` if empty |
 | `version_sort` | Number for sorting versions, e.g. `8.7` → `8007` |
 | `stars` | Label such as `4 star` |
-| `sentiment` | 1–2 stars Negative, 3 Neutral, 4–5 Positive |
+| `sentiment` | From VADER `vader_compound`: ≥ 0.05 Positive, ≤ -0.05 Negative, otherwise Neutral |
 | `replied` | `Yes` / `No` for Android; `No data` for iOS |
 | `hours_to_reply` | Hours between the review and Absa's reply |
+| `vader_neg`, `vader_neu`, `vader_pos` | VADER: share of negative, neutral and positive wording (0–1) |
+| `vader_compound` | VADER overall score, -1 (very negative) to +1 (very positive) |
 
 The first 11 columns are the raw store data. The others are calculated from them.
+
+## Sentiment
+
+Sentiment comes from [VADER](https://github.com/cjhutto/vaderSentiment), not from the star rating. VADER scores the raw text (iOS: title + text; Android: text) without cleaning, because it uses words like "not", capital letters, "!" and emojis. It is a word list with rules, so it runs in the hourly job with no extra download.
+
+Limits: English only (other languages score Neutral), very short reviews are often Neutral, and it can miss complaints that use positive words ("blank screen after successfully logging in").
 
 ## Data link for Power BI
 

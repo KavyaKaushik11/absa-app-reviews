@@ -9,6 +9,7 @@ from pathlib import Path
 import pandas as pd
 import requests
 from google_play_scraper import Sort, reviews
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 APPLE_APP_ID = "1485713913"                      # Absa Uganda (App Store)
 GOOGLE_APP_ID = "com.absa.ug.mobile.android.ui"   # Absa Uganda (Google Play)
@@ -26,7 +27,14 @@ COLUMNS = ["store", "review_id", "rating", "title", "text", "app_version",
 
 # Added by add_derived_columns() for the dashboard.
 DERIVED_COLUMNS = ["platform", "review_date_local", "review_day", "month", "version",
-                   "version_sort", "stars", "sentiment", "replied", "hours_to_reply"]
+                   "version_sort", "stars", "sentiment", "replied", "hours_to_reply",
+                   "vader_neg", "vader_neu", "vader_pos", "vader_compound"]
+
+# Standard VADER cut-offs on the compound score.
+POSITIVE_FROM = 0.05
+NEGATIVE_FROM = -0.05
+
+_vader = SentimentIntensityAnalyzer()
 
 
 def fetch_apple_reviews(app_id=APPLE_APP_ID, country=COUNTRY, max_pages=10):
@@ -102,12 +110,22 @@ def version_sort_key(version):
         return 0
 
 
-def sentiment(rating):
-    if rating >= 4:
+def text_to_score(title, text):
+    """Raw text for VADER: iOS title + text, Android text only (Google has no title).
+
+    No cleaning on purpose: VADER uses negations ("not"), capitals, "!" and emojis.
+    """
+    title = "" if pd.isna(title) else str(title).strip()
+    text = "" if pd.isna(text) else str(text).strip()
+    return f"{title}. {text}" if title and text else title or text
+
+
+def sentiment(compound):
+    if compound >= POSITIVE_FROM:
         return "Positive"
-    if rating == 3:
-        return "Neutral"
-    return "Negative"
+    if compound <= NEGATIVE_FROM:
+        return "Negative"
+    return "Neutral"
 
 
 def add_derived_columns(df):
@@ -129,7 +147,11 @@ def add_derived_columns(df):
     df["version"] = df["app_version"].map(short_version)
     df["version_sort"] = df["version"].map(version_sort_key)
     df["stars"] = df["rating"].astype(int).astype(str) + " star"
-    df["sentiment"] = df["rating"].map(sentiment)
+    scores = pd.DataFrame([_vader.polarity_scores(text_to_score(t, x))
+                           for t, x in zip(df["title"], df["text"])], index=df.index)
+    for part in ["neg", "neu", "pos", "compound"]:
+        df[f"vader_{part}"] = scores[part]
+    df["sentiment"] = df["vader_compound"].map(sentiment)
     # Apple's public feed has no developer replies, so iOS gets "No data".
     has_reply = df["reply_text"].notna() & (df["reply_text"].astype(str).str.strip() != "")
     df["replied"] = "No"
