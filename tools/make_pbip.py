@@ -206,8 +206,8 @@ def visual(page, vtype, x, y, w, h, roles, title=None, sort=None, objects=None):
     })
 
 
-def slicer(page, column, x, y, w, mode):
-    visual(page, "slicer", x, y, w, 70, {"Values": [col(column)]},
+def slicer(page, column, x, y, w, mode, sort=None):
+    visual(page, "slicer", x, y, w, 70, {"Values": [col(column)]}, sort=sort,
            objects={"data": [{"properties": {"mode": lit(f"'{mode}'")}}]})
 
 
@@ -238,6 +238,8 @@ def sentiment_colours():
 p1 = page("Overview")
 slicer(p1, "Store", 20, 10, 300, "Dropdown")
 slicer(p1, "Review Day", 340, 10, 440, "Between")
+# Newest version first (Version sorts by Version Sort).
+slicer(p1, "Version", 800, 10, 300, "Dropdown", sort=(col("Version"), "Descending"))
 for i, m in enumerate(["Review Count", "Average Rating", "% Positive", "% Negative"]):
     visual(p1, "card", 20 + i * 315, 90, 295, 95, {"Values": [meas(m)]})
 # Ratings are 1-5; the axis goes to 5.5 so lines at 5 do not touch the top edge.

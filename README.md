@@ -20,7 +20,7 @@ Click **Refresh** at any time to get the newest reviews.
 If Power BI Desktop says the file uses preview features, go to **File → Options and settings → Options → Preview features**, turn on the Power BI Project (.pbip), TMDL and PBIR options, restart Power BI Desktop and open the file again.
 
 The dashboard has 3 pages:
-- **Overview** – review count, average rating, % positive, % negative, rating per month, star split, reviews by sentiment, and a reviews list. Click a bar (for example "Negative") to filter the list; click it again to clear.
+- **Overview** – store, date and app version filters; review count, average rating, % positive, % negative, rating per month, star split, reviews by sentiment, and a reviews list. Click a bar (for example "Negative") to filter the list; click it again to clear.
 - **App versions** – average rating and sentiment per app version.
 - **Latest reviews** – every review, newest first, with filters.
 
