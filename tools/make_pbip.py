@@ -112,8 +112,9 @@ COLUMNS = [(f[1], f[3], f[4], f[5], f[6]) for f in FIELDS]
 MEASURES = [
     ("Review Count", f"COUNTROWS({T})", "#,0"),
     ("Average Rating", f"AVERAGE({T}[Rating])", "0.00"),
-    ("% Positive", f"DIVIDE(CALCULATE(COUNTROWS({T}), {T}[Sentiment] = \"Positive\"), COUNTROWS({T}))", "0.0%;-0.0%;0.0%"),
-    ("% Negative", f"DIVIDE(CALCULATE(COUNTROWS({T}), {T}[Sentiment] = \"Negative\"), COUNTROWS({T}))", "0.0%;-0.0%;0.0%"),
+    # Share of all sentiments: ignores a click on the sentiment chart, keeps every other filter.
+    ("% Positive", f"DIVIDE(CALCULATE(COUNTROWS({T}), {T}[Sentiment] = \"Positive\"), CALCULATE(COUNTROWS({T}), ALL({T}[Sentiment])))", "0.0%;-0.0%;0.0%"),
+    ("% Negative", f"DIVIDE(CALCULATE(COUNTROWS({T}), {T}[Sentiment] = \"Negative\"), CALCULATE(COUNTROWS({T}), ALL({T}[Sentiment])))", "0.0%;-0.0%;0.0%"),
     ("Android Reply Rate", f'DIVIDE(CALCULATE(COUNTROWS({T}), {T}[Replied] = "Yes"), CALCULATE(COUNTROWS({T}), {T}[Store] = "Android"))', "0.0%;-0.0%;0.0%"),
     ("Avg Hours to Reply", f"AVERAGE({T}[Hours to Reply])", "#,0.0"),
     ("Latest Review", f"MAX({T}[Review Date])", "dd mmm yyyy hh:nn"),
