@@ -115,6 +115,7 @@ MEASURES = [
     # Share of all sentiments: ignores a click on the sentiment chart, keeps every other filter.
     ("% Positive", f"DIVIDE(CALCULATE(COUNTROWS({T}), {T}[Sentiment] = \"Positive\"), CALCULATE(COUNTROWS({T}), ALL({T}[Sentiment])))", "0.0%;-0.0%;0.0%"),
     ("% Negative", f"DIVIDE(CALCULATE(COUNTROWS({T}), {T}[Sentiment] = \"Negative\"), CALCULATE(COUNTROWS({T}), ALL({T}[Sentiment])))", "0.0%;-0.0%;0.0%"),
+    ("% Neutral", f"DIVIDE(CALCULATE(COUNTROWS({T}), {T}[Sentiment] = \"Neutral\"), CALCULATE(COUNTROWS({T}), ALL({T}[Sentiment])))", "0.0%;-0.0%;0.0%"),
     ("Android Reply Rate", f'DIVIDE(CALCULATE(COUNTROWS({T}), {T}[Replied] = "Yes"), CALCULATE(COUNTROWS({T}), {T}[Store] = "Android"))', "0.0%;-0.0%;0.0%"),
     ("Avg Hours to Reply", f"AVERAGE({T}[Hours to Reply])", "#,0.0"),
     ("Latest Review", f"MAX({T}[Review Date])", "dd mmm yyyy hh:nn"),
@@ -241,8 +242,8 @@ slicer(p1, "Store", 20, 10, 300, "Dropdown")
 slicer(p1, "Review Day", 340, 10, 440, "Between")
 # Newest version first (Version sorts by Version Sort).
 slicer(p1, "Version", 800, 10, 300, "Dropdown", sort=(col("Version"), "Descending"))
-for i, m in enumerate(["Review Count", "Average Rating", "% Positive", "% Negative"]):
-    visual(p1, "card", 20 + i * 315, 90, 295, 95, {"Values": [meas(m)]})
+for i, m in enumerate(["Review Count", "Average Rating", "% Positive", "% Neutral", "% Negative"]):
+    visual(p1, "card", 20 + i * 252, 90, 232, 95, {"Values": [meas(m)]})
 # Ratings are 1-5; the axis goes to 5.5 so lines at 5 do not touch the top edge.
 visual(p1, "lineChart", 20, 200, 400, 240,
        {"Category": [col("Month")], "Series": [col("Store")], "Y": [meas("Average Rating")]},
