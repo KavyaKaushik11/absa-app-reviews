@@ -1,9 +1,10 @@
 # Absa app reviews
 
-Collects public reviews of the Absa Banking app from the Apple App Store and Google Play (South Africa) every hour, for a Power BI dashboard.
+Collects public reviews of the Absa Uganda app from the Apple App Store and Google Play (Uganda) every hour, for a Power BI dashboard.
 
 - `collect_reviews.py` – gets the newest reviews and adds them to `data/reviews.csv`. Reviewer names are not saved.
 - `collect_reviews.ipynb` – the same steps as a notebook, for exploring the data.
+- `tools/make_pbip.py` – generates the Power BI project in `powerbi/`. Run: `python tools/make_pbip.py powerbi tools/assets/CY24SU06.json`
 - `.github/workflows/collect.yml` – runs the script every hour on GitHub Actions and commits the updated CSV.
 
 ## Open the dashboard (Windows)
@@ -19,11 +20,11 @@ Click **Refresh** at any time to get the newest reviews.
 If Power BI Desktop says the file uses preview features, go to **File → Options and settings → Options → Preview features**, turn on the Power BI Project (.pbip), TMDL and PBIR options, restart Power BI Desktop and open the file again.
 
 The dashboard has 3 pages:
-- **Overview** – review count, average rating, % negative, Android reply rate, rating per week, star split.
+- **Overview** – review count, average rating, % positive, % negative, rating per month, star split.
 - **App versions** – average rating and sentiment per app version.
 - **Latest reviews** – every review, newest first, with filters.
 
-Times are shown in South African time.
+Times are shown in Uganda time (EAT, UTC+3).
 
 ## Data link for Power BI
 

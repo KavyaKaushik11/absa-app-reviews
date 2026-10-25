@@ -1,37 +1,37 @@
 table Reviews
-	lineageTag: c8d3345f-938a-4c65-8fea-53f4f15f7f55
+	lineageTag: 921277d8-1c37-4e34-b1f5-064469271492
 
 	measure 'Review Count' = COUNTROWS(Reviews)
 		formatString: #,0
-		lineageTag: 58e0cbd8-81a7-4a1f-af6b-9e5f1cf7f9da
+		lineageTag: c5445e16-de48-4f04-a294-3716bc1375d4
 
 	measure 'Average Rating' = AVERAGE(Reviews[Rating])
 		formatString: 0.00
-		lineageTag: 9bfe6c69-c542-446d-89be-99897af9c83c
+		lineageTag: 95d8e6fe-c09b-4d4d-9081-60c0f7370422
 
 	measure '% Positive' = DIVIDE(CALCULATE(COUNTROWS(Reviews), Reviews[Rating] >= 4), COUNTROWS(Reviews))
 		formatString: 0.0%;-0.0%;0.0%
-		lineageTag: fc458132-98b7-4344-a6ed-b86856802f39
+		lineageTag: befbd96f-6dd2-49db-840a-cf140250ad3a
 
 	measure '% Negative' = DIVIDE(CALCULATE(COUNTROWS(Reviews), Reviews[Rating] <= 2), COUNTROWS(Reviews))
 		formatString: 0.0%;-0.0%;0.0%
-		lineageTag: 9526f8fe-efeb-49ec-af24-5b4e076289d4
+		lineageTag: 48dc15fe-3eff-49d1-894e-ca4a7c81feb5
 
 	measure 'Android Reply Rate' = DIVIDE(CALCULATE(COUNTROWS(Reviews), Reviews[Replied] = "Yes"), CALCULATE(COUNTROWS(Reviews), Reviews[Store] = "Android"))
 		formatString: 0.0%;-0.0%;0.0%
-		lineageTag: 97c09a3f-8126-408b-ad72-df2e78eeba45
+		lineageTag: 36798752-0daa-47e1-920d-250f5054215e
 
 	measure 'Avg Hours to Reply' = AVERAGE(Reviews[Hours to Reply])
 		formatString: #,0.0
-		lineageTag: 7d7dbf95-6beb-4133-b818-820f7aa7a713
+		lineageTag: 954d050c-c637-4478-b940-5364e6d622ce
 
 	measure 'Latest Review' = MAX(Reviews[Review Date])
 		formatString: dd mmm yyyy hh:nn
-		lineageTag: 59a64ad9-44fd-4626-9f7b-84dcaf21e8d6
+		lineageTag: dd8fd6a9-31e4-4645-8a64-602d106b9b9d
 
 	column 'Store'
 		dataType: string
-		lineageTag: afb11c33-89eb-4c70-a59d-1860aaacf1f6
+		lineageTag: d40aaf6c-8e7a-4db1-969f-285fac1e6ac9
 		summarizeBy: none
 		sourceColumn: Store
 
@@ -39,7 +39,7 @@ table Reviews
 
 	column 'Review ID'
 		dataType: string
-		lineageTag: 5858c4e3-1f5f-4759-9776-c9067afb0f5a
+		lineageTag: 35e8a159-5136-4cb5-bd53-d59b2f47fce4
 		summarizeBy: none
 		sourceColumn: Review ID
 
@@ -48,7 +48,7 @@ table Reviews
 	column 'Rating'
 		dataType: int64
 		formatString: 0
-		lineageTag: f83311aa-b946-47f0-a20d-3da6e85f9e19
+		lineageTag: c24e5873-da22-4221-afd9-981f6054ecef
 		summarizeBy: none
 		sourceColumn: Rating
 
@@ -56,7 +56,7 @@ table Reviews
 
 	column 'Title'
 		dataType: string
-		lineageTag: 0de3f1e1-b411-4202-9cfa-d36d3621e015
+		lineageTag: ef99ee22-8a9e-4993-8d3b-b87a6ece8969
 		summarizeBy: none
 		sourceColumn: Title
 
@@ -64,7 +64,7 @@ table Reviews
 
 	column 'Review'
 		dataType: string
-		lineageTag: b9977ca3-041b-4522-ba1d-901222d086c9
+		lineageTag: dbab66ef-30bd-449d-bd5a-782437b5b581
 		summarizeBy: none
 		sourceColumn: Review
 
@@ -72,7 +72,7 @@ table Reviews
 
 	column 'App Version'
 		dataType: string
-		lineageTag: 13b35a58-e358-43ad-a8f5-9a924e9520a3
+		lineageTag: 233f53b6-b849-4029-9c89-5780d2428865
 		summarizeBy: none
 		sourceColumn: App Version
 
@@ -81,7 +81,7 @@ table Reviews
 	column 'Review Date'
 		dataType: dateTime
 		formatString: dd mmm yyyy hh:nn
-		lineageTag: 66c268a8-8b11-4a3b-bed2-80d1bbfc89d1
+		lineageTag: b0589155-55e6-4c86-8273-cc0fe0a78179
 		summarizeBy: none
 		sourceColumn: Review Date
 
@@ -90,7 +90,7 @@ table Reviews
 	column 'Thumbs Up'
 		dataType: int64
 		formatString: #,0
-		lineageTag: 8447ced7-1955-4cd5-a7cb-5df79db61f7a
+		lineageTag: ebf26ae3-dc90-434a-9138-2a9391e8aeaa
 		summarizeBy: sum
 		sourceColumn: Thumbs Up
 
@@ -98,7 +98,7 @@ table Reviews
 
 	column 'ABSA Reply'
 		dataType: string
-		lineageTag: 093e2bc6-86fa-448f-9138-627dbb58c36b
+		lineageTag: ab60ae87-eef0-4c92-95e0-4918522f1b46
 		summarizeBy: none
 		sourceColumn: ABSA Reply
 
@@ -107,7 +107,7 @@ table Reviews
 	column 'Reply Date'
 		dataType: dateTime
 		formatString: dd mmm yyyy hh:nn
-		lineageTag: 183c0e2d-26b0-4ba2-9b72-d6e2799b4db8
+		lineageTag: 1c4877a7-52bd-40ce-bb34-b7c0951a601c
 		summarizeBy: none
 		sourceColumn: Reply Date
 
@@ -116,7 +116,7 @@ table Reviews
 	column 'First Seen'
 		dataType: dateTime
 		formatString: dd mmm yyyy hh:nn
-		lineageTag: baf77e95-6041-47d5-963a-523f9b7de349
+		lineageTag: f995c281-0e51-4869-96b0-802f27b5920a
 		summarizeBy: none
 		sourceColumn: First Seen
 
@@ -125,24 +125,24 @@ table Reviews
 	column 'Review Day'
 		dataType: dateTime
 		formatString: dd mmm yyyy
-		lineageTag: 781a0fb3-376e-47e9-a2e5-4141a906a66c
+		lineageTag: 0a29fd99-ff6b-4f93-a411-ece5c22b1c05
 		summarizeBy: none
 		sourceColumn: Review Day
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Week Start'
+	column 'Month'
 		dataType: dateTime
-		formatString: dd mmm yyyy
-		lineageTag: 3e2af9be-ce04-4674-bc42-79fe7464e7c5
+		formatString: mmm yyyy
+		lineageTag: 61a410f1-7087-49fb-84e5-4f7399300504
 		summarizeBy: none
-		sourceColumn: Week Start
+		sourceColumn: Month
 
 		annotation SummarizationSetBy = Automatic
 
 	column 'Version'
 		dataType: string
-		lineageTag: 2a44cdf4-0715-4042-88cb-281aa202f443
+		lineageTag: 628396c0-ec55-4cae-abaf-fbf7593b3044
 		summarizeBy: none
 		sourceColumn: Version
 		sortByColumn: 'Version Sort'
@@ -152,7 +152,7 @@ table Reviews
 	column 'Version Sort'
 		dataType: int64
 		formatString: 0
-		lineageTag: e64bf4a6-9e2d-4c06-b2e5-f544ba7b72e1
+		lineageTag: d4687dfa-90c3-42a4-a4b3-de4b625ae2f3
 		summarizeBy: none
 		sourceColumn: Version Sort
 
@@ -160,7 +160,7 @@ table Reviews
 
 	column 'Stars'
 		dataType: string
-		lineageTag: e3a4603f-cade-4f0f-a089-9c7b8c1769e5
+		lineageTag: ce1b5eea-5723-4629-ab86-268abb359008
 		summarizeBy: none
 		sourceColumn: Stars
 		sortByColumn: 'Rating'
@@ -169,7 +169,7 @@ table Reviews
 
 	column 'Sentiment'
 		dataType: string
-		lineageTag: c1d9d261-6304-48de-971d-3749fe2df41b
+		lineageTag: f612792d-b5da-4694-b000-2afe16d695f9
 		summarizeBy: none
 		sourceColumn: Sentiment
 
@@ -177,7 +177,7 @@ table Reviews
 
 	column 'Replied'
 		dataType: string
-		lineageTag: 78608443-f14a-493c-9dc1-aadf4e998cb2
+		lineageTag: 4af3a28b-cb9c-4fc5-aa4b-bca4b6a335ce
 		summarizeBy: none
 		sourceColumn: Replied
 
@@ -186,7 +186,7 @@ table Reviews
 	column 'Hours to Reply'
 		dataType: double
 		formatString: #,0.0
-		lineageTag: 98dedfa4-aec4-4192-b9f3-2f452dc1f6aa
+		lineageTag: df2e714e-8a73-4a82-adf5-c19b30c690b9
 		summarizeBy: none
 		sourceColumn: Hours to Reply
 
@@ -200,14 +200,14 @@ table Reviews
 				    Headers = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
 				    Blanks = Table.ReplaceValue(Headers, "", null, Replacer.ReplaceValue, Table.ColumnNames(Headers)),
 				    Typed = Table.TransformColumnTypes(Blanks, {{"rating", Int64.Type}, {"thumbs_up", Int64.Type}, {"review_date", type datetimezone}, {"reply_date", type datetimezone}, {"fetched_at", type datetimezone}}, "en-US"),
-				    // Times are stored in UTC; show them in South African time (UTC+2).
-				    ToSA = (x) => if x = null then null else DateTimeZone.RemoveZone(DateTimeZone.SwitchZone(x, 2)),
-				    Local = Table.TransformColumns(Typed, {{"review_date", ToSA, type datetime}, {"reply_date", ToSA, type nullable datetime}, {"fetched_at", ToSA, type datetime}}),
+				    // Times are stored in UTC; show them in Uganda time (EAT, UTC+3).
+				    ToLocal = (x) => if x = null then null else DateTimeZone.RemoveZone(DateTimeZone.SwitchZone(x, 3)),
+				    Local = Table.TransformColumns(Typed, {{"review_date", ToLocal, type datetime}, {"reply_date", ToLocal, type nullable datetime}, {"fetched_at", ToLocal, type datetime}}),
 				    Stores = Table.TransformColumns(Local, {{"store", each if _ = "apple" then "iOS" else "Android", type text}}),
 				    AddDay = Table.AddColumn(Stores, "Review Day", each DateTime.Date([review_date]), type date),
-				    AddWeek = Table.AddColumn(AddDay, "Week Start", each Date.StartOfWeek([Review Day], Day.Monday), type date),
-				    // "26.8.1 - August-Release" (Android) and "26.9.3" (iOS) both become "26.8" / "26.9".
-				    AddVersion = Table.AddColumn(AddWeek, "Version", each if [app_version] = null then "Unknown" else Text.Combine(List.FirstN(Text.Split(Text.Trim(Text.Split([app_version], " - "){0}), "."), 2), "."), type text),
+				    AddMonth = Table.AddColumn(AddDay, "Month", each Date.StartOfMonth([Review Day]), type date),
+				    // "8.7.2" becomes "8.7"; Android names like "26.8.1 - August-Release" become "26.8".
+				    AddVersion = Table.AddColumn(AddMonth, "Version", each if [app_version] = null then "Unknown" else Text.Combine(List.FirstN(Text.Split(Text.Trim(Text.Split([app_version], " - "){0}), "."), 2), "."), type text),
 				    AddVersionSort = Table.AddColumn(AddVersion, "Version Sort", each try Number.From(Text.Split([Version], "."){0}) * 1000 + Number.From(Text.Split([Version], "."){1}) otherwise 0, Int64.Type),
 				    AddStars = Table.AddColumn(AddVersionSort, "Stars", each Text.From([rating]) & " star", type text),
 				    AddSentiment = Table.AddColumn(AddStars, "Sentiment", each if [rating] >= 4 then "Positive" else if [rating] = 3 then "Neutral" else "Negative", type text),

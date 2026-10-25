@@ -1,4 +1,4 @@
-"""Collect Absa Banking app reviews from the Apple App Store and Google Play (South Africa).
+"""Collect Absa Uganda app reviews from the Apple App Store and Google Play (Uganda).
 
 Adds new reviews to data/reviews.csv and removes duplicates. Safe to run as often as needed.
 Reviewer names are not saved, because the CSV is published in a public repo.
@@ -10,9 +10,9 @@ import pandas as pd
 import requests
 from google_play_scraper import Sort, reviews
 
-APPLE_APP_ID = "1085620596"                  # Absa Banking (App Store)
-GOOGLE_APP_ID = "com.barclays.absa.banking"   # Absa Banking App (Google Play)
-COUNTRY = "za"
+APPLE_APP_ID = "1485713913"                      # Absa Uganda (App Store)
+GOOGLE_APP_ID = "com.absa.ug.mobile.android.ui"   # Absa Uganda (Google Play)
+COUNTRY = "ug"
 GOOGLE_MAX_REVIEWS = 1000                     # newest N reviews per run
 
 DATA_FILE = Path(__file__).parent / "data" / "reviews.csv"

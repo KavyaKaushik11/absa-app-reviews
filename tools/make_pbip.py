@@ -72,14 +72,14 @@ M_QUERY = f'''let
     Headers = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
     Blanks = Table.ReplaceValue(Headers, "", null, Replacer.ReplaceValue, Table.ColumnNames(Headers)),
     Typed = Table.TransformColumnTypes(Blanks, {{{{"rating", Int64.Type}}, {{"thumbs_up", Int64.Type}}, {{"review_date", type datetimezone}}, {{"reply_date", type datetimezone}}, {{"fetched_at", type datetimezone}}}}, "en-US"),
-    // Times are stored in UTC; show them in South African time (UTC+2).
-    ToSA = (x) => if x = null then null else DateTimeZone.RemoveZone(DateTimeZone.SwitchZone(x, 2)),
-    Local = Table.TransformColumns(Typed, {{{{"review_date", ToSA, type datetime}}, {{"reply_date", ToSA, type nullable datetime}}, {{"fetched_at", ToSA, type datetime}}}}),
+    // Times are stored in UTC; show them in Uganda time (EAT, UTC+3).
+    ToLocal = (x) => if x = null then null else DateTimeZone.RemoveZone(DateTimeZone.SwitchZone(x, 3)),
+    Local = Table.TransformColumns(Typed, {{{{"review_date", ToLocal, type datetime}}, {{"reply_date", ToLocal, type nullable datetime}}, {{"fetched_at", ToLocal, type datetime}}}}),
     Stores = Table.TransformColumns(Local, {{{{"store", each if _ = "apple" then "iOS" else "Android", type text}}}}),
     AddDay = Table.AddColumn(Stores, "Review Day", each DateTime.Date([review_date]), type date),
-    AddWeek = Table.AddColumn(AddDay, "Week Start", each Date.StartOfWeek([Review Day], Day.Monday), type date),
-    // "26.8.1 - August-Release" (Android) and "26.9.3" (iOS) both become "26.8" / "26.9".
-    AddVersion = Table.AddColumn(AddWeek, "Version", each if [app_version] = null then "Unknown" else Text.Combine(List.FirstN(Text.Split(Text.Trim(Text.Split([app_version], " - "){{0}}), "."), 2), "."), type text),
+    AddMonth = Table.AddColumn(AddDay, "Month", each Date.StartOfMonth([Review Day]), type date),
+    // "8.7.2" becomes "8.7"; Android names like "26.8.1 - August-Release" become "26.8".
+    AddVersion = Table.AddColumn(AddMonth, "Version", each if [app_version] = null then "Unknown" else Text.Combine(List.FirstN(Text.Split(Text.Trim(Text.Split([app_version], " - "){{0}}), "."), 2), "."), type text),
     AddVersionSort = Table.AddColumn(AddVersion, "Version Sort", each try Number.From(Text.Split([Version], "."){{0}}) * 1000 + Number.From(Text.Split([Version], "."){{1}}) otherwise 0, Int64.Type),
     AddStars = Table.AddColumn(AddVersionSort, "Stars", each Text.From([rating]) & " star", type text),
     AddSentiment = Table.AddColumn(AddStars, "Sentiment", each if [rating] >= 4 then "Positive" else if [rating] = 3 then "Neutral" else "Negative", type text),
@@ -104,7 +104,7 @@ COLUMNS = [
     ("Reply Date", "dateTime", "dd mmm yyyy hh:nn", "none", None),
     ("First Seen", "dateTime", "dd mmm yyyy hh:nn", "none", None),
     ("Review Day", "dateTime", "dd mmm yyyy", "none", None),
-    ("Week Start", "dateTime", "dd mmm yyyy", "none", None),
+    ("Month", "dateTime", "mmm yyyy", "none", None),
     ("Version", "string", None, "none", "Version Sort"),
     ("Version Sort", "int64", "0", "none", None),
     ("Stars", "string", None, "none", "Rating"),
@@ -230,11 +230,11 @@ def page(display_name):
 p1 = page("Overview")
 slicer(p1, "Store", 20, 10, 300, "Dropdown")
 slicer(p1, "Review Day", 340, 10, 440, "Between")
-for i, m in enumerate(["Review Count", "Average Rating", "% Negative", "Android Reply Rate"]):
+for i, m in enumerate(["Review Count", "Average Rating", "% Positive", "% Negative"]):
     visual(p1, "card", 20 + i * 315, 95, 295, 110, {"Values": [meas(m)]})
 visual(p1, "lineChart", 20, 225, 610, 475,
-       {"Category": [col("Week Start")], "Series": [col("Store")], "Y": [meas("Average Rating")]},
-       title="Average rating per week", sort=(col("Week Start"), "Ascending"))
+       {"Category": [col("Month")], "Series": [col("Store")], "Y": [meas("Average Rating")]},
+       title="Average rating per month", sort=(col("Month"), "Ascending"))
 visual(p1, "clusteredColumnChart", 650, 225, 610, 475,
        {"Category": [col("Stars")], "Series": [col("Store")], "Y": [meas("Review Count")]},
        title="Reviews by star rating", sort=(col("Stars"), "Ascending"))
