@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.1.0/schema.json",
+  "name": "02eb64ad933f4d858832",
+  "position": {
+    "x": 650,
+    "y": 95,
+    "z": 5000,
+    "height": 110,
+    "width": 295,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Reviews"
+                    }
+                  },
+                  "Property": "% Negative"
+                }
+              },
+              "queryRef": "Reviews.% Negative",
+              "nativeQueryRef": "% Negative"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

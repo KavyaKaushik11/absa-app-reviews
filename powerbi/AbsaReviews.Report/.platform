@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "AbsaReviews"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "bba972a2-216b-486a-a095-cab529aaad3d"
+  }
+}

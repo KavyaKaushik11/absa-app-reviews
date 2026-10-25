@@ -1,0 +1,114 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.1.0/schema.json",
+  "name": "6966475d141c4cf98335",
+  "position": {
+    "x": 650,
+    "y": 95,
+    "z": 11000,
+    "height": 605,
+    "width": 610,
+    "tabOrder": 11000
+  },
+  "visual": {
+    "visualType": "barChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Reviews"
+                    }
+                  },
+                  "Property": "Version"
+                }
+              },
+              "queryRef": "Reviews.Version",
+              "nativeQueryRef": "Version"
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Reviews"
+                    }
+                  },
+                  "Property": "Sentiment"
+                }
+              },
+              "queryRef": "Reviews.Sentiment",
+              "nativeQueryRef": "Sentiment"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Reviews"
+                    }
+                  },
+                  "Property": "Review Count"
+                }
+              },
+              "queryRef": "Reviews.Review Count",
+              "nativeQueryRef": "Review Count"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Reviews"
+                  }
+                },
+                "Property": "Version"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Reviews by app version and sentiment'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

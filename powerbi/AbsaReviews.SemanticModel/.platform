@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "AbsaReviews"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "3fc3df24-bf6f-4255-95f5-6792a3395807"
+  }
+}
